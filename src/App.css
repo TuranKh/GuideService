@@ -1,0 +1,14 @@
+@font-face {
+    font-family: "TT-Interphases";
+    src: url("./assets/fonts/TT-Interphases-Medium");
+    font-weight: 500;
+}
+
+* {
+    font-family: "TT-Interphases";
+    font-weight: 500;
+}
+
+label {
+    color: #81858c;
+}

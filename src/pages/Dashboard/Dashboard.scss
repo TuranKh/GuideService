@@ -1,0 +1,27 @@
+header {
+    display: flex;
+    height: 4rem;
+    box-shadow: 4px 0px 24px 0px #00000014;
+    align-items: center;
+    padding: 1rem 0.75rem;
+    .user-details {
+        display: flex;
+        gap: 1rem;
+        flex-grow: 1;
+        justify-content: flex-end;
+    }
+
+    > input {
+        max-width: 20rem;
+    }
+}
+
+.dashboard-wrapper {
+    display: flex;
+
+    main {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+}
