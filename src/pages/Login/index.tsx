@@ -1,12 +1,9 @@
 import LoginBackground from "@/assets/login-background.jpg";
 import Logo from "@/assets/logo.png";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { ElementRef, useRef, useState } from "react";
 import "./Login.scss";
 import { useNavigate } from "react-router";
+import Input from "antd/es/input/Input";
 
 export default function Login() {
     const navigate = useNavigate();
@@ -60,7 +57,7 @@ export default function Login() {
                 </div>
                 <form>
                     <div className='grid w-full max-w-sm items-center gap-1.5'>
-                        <Label htmlFor='email'>Email adresi</Label>
+                        <label htmlFor='email'>Email adresi</label>
                         <Input
                             name='email'
                             value={signInDetails.email}
@@ -72,7 +69,7 @@ export default function Login() {
                     </div>
 
                     <div className='grid w-full max-w-sm items-center gap-1.5'>
-                        <Label htmlFor='password'>Şifrə</Label>
+                        <label htmlFor='password'>Şifrə</label>
                         <Input
                             name='password'
                             value={signInDetails.password}
@@ -86,7 +83,7 @@ export default function Login() {
                     <div className='flex justify-between items-center'>
                         <div className='flex items-center space-x-2'>
                             <Switch checked={signInDetails.rememberMe} onCheckedChange={rememberMe} id='airplane-mode' />
-                            <Label htmlFor='airplane-mode'>Yadda saxla</Label>
+                            <label htmlFor='airplane-mode'>Yadda saxla</label>
                         </div>
                         <p className='forgot-password'>Şifrəmi unutdum?</p>
                     </div>

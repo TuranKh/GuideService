@@ -1,14 +1,32 @@
 @font-face {
-    font-family: "TT-Interphases";
-    src: url("./assets/fonts/TT-Interphases-Medium");
+    font-family: "Poppins";
+    src: url("./assets/fonts/Poppins-Regular.ttf");
+    font-weight: 400;
+}
+@font-face {
+    font-family: "Poppins";
+    src: url("./assets/fonts/Poppins-Medium.ttf");
     font-weight: 500;
+}
+@font-face {
+    font-family: "Poppins";
+    src: url("./assets/fonts/Poppins-Light.ttf");
+    font-weight: 300;
+}
+
+:root {
+    --icon-button: #f4f4f4;
 }
 
 * {
-    font-family: "TT-Interphases";
+    font-family: "Poppins";
     font-weight: 500;
 }
 
 label {
     color: #81858c;
+}
+
+.ant-switch {
+    background: rgba(0, 0, 0, 0.45);
 }

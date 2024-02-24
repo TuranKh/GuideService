@@ -1,54 +1,67 @@
-import SaveIcon from "@/assets/icons/save.svg";
-import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { IconButton } from "@/pages/Dashboard";
+import { Calendar, History, LayoutDashboard, ListChecks, LogOut, Map, MessageCircle, Users } from "lucide-react";
 import "./Sidebar.scss";
+import { useNavigate } from "react-router";
+import { Tooltip } from "antd";
 
 export const Sidebar = function () {
+    const navigate = useNavigate();
+
     return (
         <aside>
-            {Menus.map((menu) => {
-                return (
-                    <TooltipProvider delayDuration={250}>
-                        <Tooltip>
-                            <TooltipTrigger>
-                                <Button variant='outline' size='icon'>
-                                    <img src={menu.icon} />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent side='right'>
-                                <p>{menu.title}</p>
-                            </TooltipContent>
+            <div className='main-icons'>
+                {Menus.map((menu) => {
+                    return (
+                        <Tooltip placement='left' title={menu.title}>
+                            <IconButton onClick={() => navigate(menu.route)} activateOnHover>
+                                {menu.icon}
+                            </IconButton>
                         </Tooltip>
-                    </TooltipProvider>
-                );
-            })}
+                    );
+                })}
+            </div>
+
+            <IconButton onClick={() => navigate("/login")} activateOnHover>
+                <LogOut color='#E55353' />
+            </IconButton>
         </aside>
     );
 };
 
 const Menus = [
     {
-        icon: SaveIcon,
+        icon: <Calendar />,
+        route: "/dashboard",
         title: "Here it is",
     },
     {
-        icon: SaveIcon,
+        icon: <LayoutDashboard />,
+        route: "/layout",
         title: "Here it is",
     },
     {
-        icon: SaveIcon,
+        icon: <Users />,
+        route: "/users",
         title: "Here it is",
     },
     {
-        icon: SaveIcon,
+        icon: <MessageCircle />,
+        route: "/messages",
         title: "Here it is",
     },
     {
-        icon: SaveIcon,
+        icon: <Map />,
+        route: "/map",
         title: "Here it is",
     },
     {
-        icon: SaveIcon,
+        icon: <ListChecks />,
+        route: "/history",
+        title: "Here it is",
+    },
+    {
+        icon: <History />,
+        route: "/history",
         title: "Here it is",
     },
 ];

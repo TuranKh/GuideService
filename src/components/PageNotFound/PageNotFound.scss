@@ -1,0 +1,9 @@
+.main-container-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    > .message-block {
+        display: flex;
+    }
+}

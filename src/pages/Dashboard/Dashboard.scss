@@ -16,6 +16,22 @@ header {
     }
 }
 
+.icon-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--icon-button);
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    transition: 0.25s;
+    &.on-hover {
+        background-color: transparent;
+        &:hover {
+            background-color: var(--icon-button);
+        }
+    }
+}
+
 .dashboard-wrapper {
     display: flex;
 
@@ -23,5 +39,99 @@ header {
         display: flex;
         flex-direction: column;
         flex-grow: 1;
+    }
+}
+
+.calendar-section {
+    display: flex;
+    flex-direction: column;
+    padding: 1.75rem 1rem;
+}
+
+.order-drawer {
+    .drawer-header {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        height: 2.5rem;
+
+        p {
+            font-size: 1.75rem;
+        }
+
+        .ant-tag {
+            display: block;
+            color: black;
+            height: 100%;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+
+    .order-details {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .ant-drawer-body {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+
+    .general-inputs-wrapper {
+        > p {
+            margin-bottom: 1.25rem;
+            font-weight: 600;
+            font-size: 1.25rem;
+        }
+        .general-inputs {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+    }
+
+    .switches-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+
+        > div {
+            display: flex;
+            align-items: center;
+            width: 14rem;
+            justify-content: space-between;
+        }
+    }
+}
+
+.actions-wrapper {
+    margin-top: 1.75rem;
+    display: flex;
+    justify-content: space-between;
+    height: 40px;
+    > .left {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+
+        .arrows-wrapper {
+            display: flex;
+            height: 100%;
+            align-items: center;
+            gap: 0.25rem;
+
+            > .date-wrapper {
+                height: 100%;
+                background-color: var(--icon-button);
+                display: flex;
+                align-items: center;
+                padding: 12px 15px;
+            }
+        }
     }
 }

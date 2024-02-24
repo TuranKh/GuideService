@@ -1,0 +1,13 @@
+.input-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+
+    label {
+        font-weight: 300;
+    }
+
+    input {
+        font-weight: 300;
+    }
+}
