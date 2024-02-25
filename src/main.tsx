@@ -1,19 +1,24 @@
-import React, { Suspense } from "react";
+import dayjs from "dayjs";
+import "dayjs/locale/az";
+import updateLocale from "dayjs/plugin/updateLocale";
+import weekday from "dayjs/plugin/weekday";
+import React from "react";
 import ReactDOM from "react-dom/client";
-import { RouterProvider } from "react-router-dom";
-import { ConfigProvider as DesignConfigProvider, ThemeConfig } from "antd";
 import "./index.css";
-import { router } from "./router/router.tsx";
-import AzLocale from "antd/locale/az_AZ";
-import { Loading } from "./components/Loading/index.tsx";
-import { CustomNoOptions } from "./components/CustomNoOptions/index.tsx";
+import App from "./App";
+
+dayjs.extend(updateLocale);
+dayjs.extend(weekday);
+dayjs.locale("az");
+
+export const weekdayNames = ["Bazar ertəsi", "Çərşənbə axşamı", "Çərşənbə", "Cümə axşamı", "Cümə", "Şənbə", "Bazar"];
+
+dayjs.updateLocale("az", {
+    weekdays: weekdayNames,
+});
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
-        <Suspense fallback={<Loading />}>
-            <DesignConfigProvider componentSize='large' renderEmpty={CustomNoOptions} locale={AzLocale}>
-                <RouterProvider router={router} />
-            </DesignConfigProvider>
-        </Suspense>
+        <App />
     </React.StrictMode>,
 );

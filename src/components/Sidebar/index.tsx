@@ -13,15 +13,13 @@ export const Sidebar = function () {
                 {Menus.map((menu) => {
                     return (
                         <Tooltip placement='left' title={menu.title}>
-                            <IconButton onClick={() => navigate(menu.route)} activateOnHover>
-                                {menu.icon}
-                            </IconButton>
+                            <IconButton onClick={() => navigate(menu.route)}>{menu.icon}</IconButton>
                         </Tooltip>
                     );
                 })}
             </div>
 
-            <IconButton onClick={() => navigate("/login")} activateOnHover>
+            <IconButton onClick={() => navigate("/login")}>
                 <LogOut color='#E55353' />
             </IconButton>
         </aside>

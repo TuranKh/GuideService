@@ -1,9 +1,11 @@
 import LoginBackground from "@/assets/login-background.jpg";
 import Logo from "@/assets/logo.png";
-import { ElementRef, useRef, useState } from "react";
+import { ElementRef, FormEvent, useRef, useState } from "react";
 import "./Login.scss";
 import { useNavigate } from "react-router";
 import Input from "antd/es/input/Input";
+import { Button, Switch } from "antd";
+import toast from "react-hot-toast";
 
 export default function Login() {
     const navigate = useNavigate();
@@ -39,12 +41,13 @@ export default function Login() {
         });
     };
 
-    const signIn = function () {
-        // TOOD: Add validation function
+    const signIn = function (e: FormEvent<HTMLFormElement>) {
+        e.preventDefault();
         const isValid = true;
 
         if (isValid) {
-            navigate("");
+            toast.success("Uğurla giriş etdiniz!");
+            navigate("/dashboard");
         }
     };
 
@@ -55,7 +58,7 @@ export default function Login() {
                     <img className='logo' src={Logo} />
                     <h1>Guide Service</h1>
                 </div>
-                <form>
+                <form onSubmit={signIn}>
                     <div className='grid w-full max-w-sm items-center gap-1.5'>
                         <label htmlFor='email'>Email adresi</label>
                         <Input
@@ -82,15 +85,13 @@ export default function Login() {
 
                     <div className='flex justify-between items-center'>
                         <div className='flex items-center space-x-2'>
-                            <Switch checked={signInDetails.rememberMe} onCheckedChange={rememberMe} id='airplane-mode' />
+                            <Switch checked={signInDetails.rememberMe} onChange={rememberMe} id='airplane-mode' />
                             <label htmlFor='airplane-mode'>Yadda saxla</label>
                         </div>
                         <p className='forgot-password'>Şifrəmi unutdum?</p>
                     </div>
 
-                    <Button onClick={signIn} type='button'>
-                        Giriş et
-                    </Button>
+                    <Button htmlType='submit'>Giriş et</Button>
                 </form>
             </div>
             <div ref={imageWrapper} className='blur-load'>

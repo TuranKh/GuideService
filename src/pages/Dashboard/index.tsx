@@ -1,28 +1,110 @@
-import NotificationsIcon from "@/assets/icons/notification.svg";
-import SaveIcon from "@/assets/icons/save.svg";
-import { CustomInput, InputDetails } from "@/components/CustomInput";
+import { CustomTextField } from "@/components/CustomInputs/TextField";
+import { FormBuilder, FormDetails, InputChangeDetails } from "@/components/FormBuilder";
 import { Sidebar } from "@/components/Sidebar";
+import { weekdayNames } from "@/main";
 import { Button, Divider, Drawer, Input, Space, Switch, Table, TableProps, Tag } from "antd";
-import { Bell, ChevronLeft, ChevronRight, Eye, ListFilter, RefreshCcw, Save, Search, SlidersHorizontal } from "lucide-react";
-import React, { ButtonHTMLAttributes, ChangeEvent, DetailedHTMLProps, useState } from "react";
+import dayjs from "dayjs";
+import {
+    Bell,
+    Bookmark,
+    Bus,
+    ChevronLeft,
+    ChevronRight,
+    Eye,
+    Headphones,
+    ListFilter,
+    Plane,
+    Plus,
+    RefreshCcw,
+    Search,
+    SlidersHorizontal,
+} from "lucide-react";
+import React, { ButtonHTMLAttributes, DetailedHTMLProps, useState } from "react";
 import "./Dashboard.scss";
 
 export default function Dashboard() {
     return (
         <div className='dashboard-wrapper'>
             <Sidebar />
-            {/* <Camera color='red' size={48} />; */}
             <main>
                 <Header />
                 <div className='calendar-section'>
                     <Actions />
+                    <Calendar />
                 </div>
             </main>
         </div>
     );
 }
+function getCurrentWeekDates() {
+    const weekStart = dayjs().startOf("week");
 
-// type OrderDetails = Record<keyof typeof initialOrderDetails, string | null | Date>;
+    const dates = Array.from({ length: 7 }, (_, index) => {
+        const date = weekStart.add(index, "day");
+        return date.format("DD MMMM");
+    });
+
+    return dates;
+}
+export const Calendar = function () {
+    const currentWeekDates = getCurrentWeekDates();
+
+    return (
+        <div className='calendar'>
+            {weekdayNames.map((weekDay, index) => {
+                return (
+                    <div className='calendar-row'>
+                        <div className='row-details'>
+                            <div className='date-details'>
+                                <p className='font-light text-xs'>{weekDay}</p>
+                                <p>{currentWeekDates[index]}</p>
+                            </div>
+                            <Plus />
+                        </div>
+                        <div className='row-main-content'>
+                            {temporaryRowDetails.map((details) => {
+                                return <CalendarEvent details={details} />;
+                            })}
+                        </div>
+                    </div>
+                );
+            })}
+        </div>
+    );
+};
+
+export const CalendarEvent = function ({ details }: { details: { name: string } }) {
+    return (
+        <div className='calendar-event'>
+            <div className='flex justify-between'>
+                <p className='text-xs font-light agency-name'>{details.name}</p>
+                <div className='flex gap-0.5'>
+                    <Bus size={16} />
+                    <Plane size={16} />
+                    <Headphones size={16} />
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const temporaryRowDetails = [
+    {
+        name: "Agro Agency",
+    },
+    {
+        name: "Agro Agency",
+    },
+    {
+        name: "Agro Agency",
+    },
+    {
+        name: "Agro Agency",
+    },
+    {
+        name: "Agro Agency",
+    },
+];
 
 type GeneralOrderDetails = {
     orderNumber: number;
@@ -60,22 +142,20 @@ const initialGeneralOrderDetails = {
 
 export type Nullable<T> = Record<keyof T, T[keyof T] | null>;
 
-const generalFormFields: InputDetails<GeneralOrderDetails>[] = [
-    { label: "Tarix", type: "date", inputKey: "date" },
-    { label: "Müştəri sayı", type: "number", inputKey: "customerCount" },
-    { label: "Dil seçimi", type: "select", inputKey: "languageSelection" },
-    { label: "Guide kateqoriya", type: "select", inputKey: "guideCategory" },
-    { label: "Maşın növü", type: "select", inputKey: "vehicleType" },
-    { label: "Qarşılama yeri", type: "text", inputKey: "meetingLocation" },
-    { label: "Group lead name", type: "text", inputKey: "groupLeadName" },
-    { label: "Turistin əlaqə nömrəsi", type: "text", inputKey: "touristContactNumber" },
-    { label: "Guide", type: "select", inputKey: "guide" },
-    { label: "Sürücü", type: "select", inputKey: "driver" },
-    { label: "Qeydiyyat nişanı", type: "text", inputKey: "registrationPlate" },
-    { label: "Təsdiq növü", type: "select", inputKey: "confirmationType" },
-];
-
-const orderDetailsForms = [{}];
+const generalFormFields: FormDetails[] = [
+    { label: "Tarix", type: "date", key: "date" },
+    { label: "Müştəri sayı", type: "number", key: "customerCount" },
+    { label: "Dil seçimi", type: "select", key: "languageSelection" },
+    { label: "Guide kateqoriya", type: "select", key: "guideCategory" },
+    { label: "Maşın növü", type: "select", key: "vehicleType" },
+    { label: "Qarşılama yeri", type: "text", key: "meetingLocation" },
+    { label: "Group lead name", type: "text", key: "groupLeadName" },
+    { label: "Turistin əlaqə nömrəsi", type: "text", key: "touristContactNumber" },
+    { label: "Guide", type: "select", key: "guide" },
+    { label: "Sürücü", type: "select", key: "driver" },
+    { label: "Qeydiyyat nişanı", type: "text", key: "registrationPlate" },
+    { label: "Təsdiq növü", type: "select", key: "confirmationType" },
+] as const;
 
 export const Actions = function () {
     const [orderDrawer, setOrderDrawer] = useState(false);
@@ -96,12 +176,20 @@ export const Actions = function () {
         });
     };
 
-    const onGeneralFormChange = function (e: ChangeEvent<HTMLInputElement>) {
-        const { name, value } = e.target;
+    const onOrderDetailsChange = function ({ key, value }: InputChangeDetails) {
+        setOrderDetails((currentState) => {
+            return {
+                ...currentState,
+                [key]: value,
+            };
+        });
+    };
+
+    const onGeneralFormChange = function ({ key, value }: InputChangeDetails) {
         setGeneralDetails((currentState) => {
             return {
                 ...currentState,
-                [name]: value,
+                [key]: value,
             };
         });
     };
@@ -142,33 +230,58 @@ export const Actions = function () {
                     open={orderDrawer}
                 >
                     <div className='order-details'>
-                        <CustomInput key={"orderNumber"} label={"Sifariş nömrəsi"} type='text' value={orderDetails.orderNumber} />
-                        <CustomInput key={"assignedTo"} label={"Təyin edilib"} type='text' value={orderDetails.assignedTo} />
+                        <CustomTextField
+                            inputDetails={{
+                                key: "orderNumber",
+                                onChange: onOrderDetailsChange,
+                                label: "Sifariş nömrəsi",
+                                type: "text",
+                                value: orderDetails.orderNumber,
+                            }}
+                        />
+                        <CustomTextField
+                            inputDetails={{
+                                key: "assignedTo",
+                                onChange: onOrderDetailsChange,
+                                label: "Təyin edilib",
+                                type: "text",
+                                value: orderDetails.assignedTo,
+                            }}
+                        />
                     </div>
-                    <div className='general-inputs-wrapper'>
+                    <form className='general-inputs-wrapper'>
                         <p>Ümumi məlumatlar</p>
                         <div className='general-inputs'>
-                            {generalFormFields.map((fieldDetails) => {
-                                const { inputKey, label } = fieldDetails;
-                                const value = generalDetails[inputKey] as string;
+                            {/* {generalFormFields.map((fieldDetails) => {
+                                const { key, label } = fieldDetails;
+                                const value = generalDetails[key] as string;
                                 return (
                                     <CustomInput
-                                        key={inputKey}
-                                        name={inputKey}
+                                        key={key}
+                                        name={key}
                                         onChange={onGeneralFormChange}
-                                        inputKey={inputKey as string}
+                                        key={key as string}
                                         label={label}
                                         type='text'
                                         value={value}
                                     />
                                 );
-                            })}
+                            })} */}
+                            <FormBuilder
+                                form={{
+                                    inputs: generalFormFields,
+                                    onChange: onGeneralFormChange,
+                                    values: generalDetails,
+                                    options: { languageSelection: [] },
+                                }}
+                            />
+                            <IconButton className='reset' type='reset' onClick={resetForm}>
+                                <RefreshCcw />
+                            </IconButton>
                         </div>
-                        <IconButton onClick={resetForm}>
-                            <RefreshCcw />
-                        </IconButton>
+
                         <Divider />
-                    </div>
+                    </form>
 
                     <Table columns={columns} dataSource={data} />
 
@@ -320,14 +433,13 @@ const data: DataType[] = [
 
 export const IconButton = function ({
     children,
-    activateOnHover,
     ...buttonDefaultProps
 }: {
     children: React.ReactElement;
-    activateOnHover?: boolean;
 } & DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>) {
+    const className = `icon-button ${buttonDefaultProps.className}`;
     return (
-        <button {...buttonDefaultProps} className={`icon-button ${activateOnHover && "on-hover"}`}>
+        <button {...buttonDefaultProps} className={className}>
             {children}
         </button>
     );
@@ -336,10 +448,10 @@ export const IconButton = function ({
 export const Header = function () {
     return (
         <header>
-            <Input placeholder='Axtarış' prefix={<Search />} />
+            <Input className='search' placeholder='Axtarış' prefix={<Search />} />
             <div className='user-details'>
                 <IconButton>
-                    <Save />
+                    <Bookmark />
                 </IconButton>
                 <IconButton>
                     <Bell />
