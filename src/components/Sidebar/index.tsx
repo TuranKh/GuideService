@@ -1,11 +1,25 @@
-import { IconButton } from "@/pages/Dashboard";
 import { Calendar, History, LayoutDashboard, ListChecks, LogOut, Map, MessageCircle, Users } from "lucide-react";
 import "./Sidebar.scss";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { Tooltip } from "antd";
+import { useEffect, useState } from "react";
+import { IconButton } from "../IconButton";
 
 export const Sidebar = function () {
+    const [activeRoute, setActiveRoute] = useState(Menus[0].route);
     const navigate = useNavigate();
+    const location = useLocation();
+
+    useEffect(() => {
+        const [_, activePath] = location.pathname.split("/");
+        setActiveRoute(activePath);
+    }, [location]);
+
+    const onSidebarIconClick = function (route: string) {
+        const finalPath = `/${route}`;
+        setActiveRoute(route);
+        navigate(finalPath);
+    };
 
     return (
         <aside>
@@ -13,7 +27,9 @@ export const Sidebar = function () {
                 {Menus.map((menu) => {
                     return (
                         <Tooltip placement='left' title={menu.title}>
-                            <IconButton onClick={() => navigate(menu.route)}>{menu.icon}</IconButton>
+                            <IconButton className={activeRoute === menu.route ? "active" : ""} onClick={() => onSidebarIconClick(menu.route)}>
+                                {menu.icon}
+                            </IconButton>
                         </Tooltip>
                     );
                 })}
@@ -29,37 +45,37 @@ export const Sidebar = function () {
 const Menus = [
     {
         icon: <Calendar />,
-        route: "/dashboard",
-        title: "Here it is",
+        route: "calendar",
+        title: "Calendar",
     },
     {
         icon: <LayoutDashboard />,
-        route: "/layout",
-        title: "Here it is",
+        route: "dashboard",
+        title: "Dashboard",
     },
     {
         icon: <Users />,
-        route: "/users",
-        title: "Here it is",
+        route: "users",
+        title: "Users",
     },
     {
         icon: <MessageCircle />,
-        route: "/messages",
-        title: "Here it is",
+        route: "messages",
+        title: "Messages",
     },
     {
         icon: <Map />,
-        route: "/map",
-        title: "Here it is",
+        route: "map",
+        title: "Map",
     },
     {
         icon: <ListChecks />,
-        route: "/history",
-        title: "Here it is",
+        route: "payments",
+        title: "Payments",
     },
     {
         icon: <History />,
-        route: "/history",
-        title: "Here it is",
+        route: "history",
+        title: "History",
     },
 ];

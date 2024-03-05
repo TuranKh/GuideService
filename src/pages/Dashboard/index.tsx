@@ -1,6 +1,6 @@
 import { CustomTextField } from "@/components/CustomInputs/TextField";
 import { FormBuilder, FormDetails, InputChangeDetails } from "@/components/FormBuilder";
-import { Sidebar } from "@/components/Sidebar";
+import { IconButton } from "@/components/IconButton";
 import { weekdayNames } from "@/main";
 import { Button, Divider, Drawer, Input, Space, Switch, Table, TableProps, Tag } from "antd";
 import dayjs from "dayjs";
@@ -19,20 +19,14 @@ import {
     Search,
     SlidersHorizontal,
 } from "lucide-react";
-import React, { ButtonHTMLAttributes, DetailedHTMLProps, useState } from "react";
+import { useState } from "react";
 import "./Dashboard.scss";
 
 export default function Dashboard() {
     return (
-        <div className='dashboard-wrapper'>
-            <Sidebar />
-            <main>
-                <Header />
-                <div className='calendar-section'>
-                    <Actions />
-                    <Calendar />
-                </div>
-            </main>
+        <div className='calendar-section'>
+            <Actions />
+            <Calendar />
         </div>
     );
 }
@@ -157,10 +151,27 @@ const generalFormFields: FormDetails[] = [
     { label: "Təsdiq növü", type: "select", key: "confirmationType" },
 ] as const;
 
+enum CalendarViewOptions {
+    Week = "Week",
+    Month = "Month",
+}
+
+const viewOptions = [
+    {
+        label: "Week",
+        key: CalendarViewOptions.Week,
+    },
+    {
+        label: "Month",
+        key: CalendarViewOptions.Month,
+    },
+];
+
 export const Actions = function () {
     const [orderDrawer, setOrderDrawer] = useState(false);
     const [generalDetails, setGeneralDetails] = useState<Nullable<GeneralOrderDetails>>(initialGeneralOrderDetails);
     const [orderDetails, setOrderDetails] = useState({ assignedTo: "", orderNumber: "" });
+    const [activeCalendarViewOption, setActiveCalendarViewOption] = useState<CalendarViewOptions>(CalendarViewOptions.Month);
 
     const openNewOrderDialog = function () {
         setOrderDrawer(true);
@@ -194,6 +205,10 @@ export const Actions = function () {
         });
     };
 
+    const changeCalendarViewOption = function (viewOption: CalendarViewOptions) {
+        setActiveCalendarViewOption(viewOption);
+    };
+
     return (
         <div className='actions-wrapper'>
             <div className='left'>
@@ -207,6 +222,18 @@ export const Actions = function () {
                     <IconButton>
                         <ChevronRight />
                     </IconButton>
+                </div>
+                <div className='calendar-view-options'>
+                    {viewOptions.map((option) => {
+                        return (
+                            <div
+                                className={activeCalendarViewOption === option.key ? "active" : ""}
+                                onClick={() => changeCalendarViewOption(option.key)}
+                            >
+                                {option.label}
+                            </div>
+                        );
+                    })}
                 </div>
                 <IconButton>
                     <Eye />
@@ -301,11 +328,11 @@ export const Actions = function () {
     );
 };
 
-export const DrawerHeader = function ({ orderNumber }: { orderNumber: string }) {
+export const DrawerHeader = function ({ orderNumber, title }: { orderNumber: string; title?: string }) {
     const color = "#DBDBDB";
     return (
         <div className='drawer-header'>
-            <p>Yeni Sifariş</p>
+            <p>{title}</p>
             <Tag color={color}>{orderNumber.toUpperCase()}</Tag>
         </div>
     );
@@ -430,20 +457,6 @@ const data: DataType[] = [
         tags: ["cool", "teacher"],
     },
 ];
-
-export const IconButton = function ({
-    children,
-    ...buttonDefaultProps
-}: {
-    children: React.ReactElement;
-} & DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>) {
-    const className = `icon-button ${buttonDefaultProps.className}`;
-    return (
-        <button {...buttonDefaultProps} className={className}>
-            {children}
-        </button>
-    );
-};
 
 export const Header = function () {
     return (

@@ -1,0 +1,17 @@
+.icon-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    transition: 0.25s;
+    &.on-hover {
+        background-color: transparent;
+        &:hover {
+            background-color: var(--icon-button);
+        }
+    }
+}
+.icon-button.active {
+    background-color: var(--icon-button);
+}

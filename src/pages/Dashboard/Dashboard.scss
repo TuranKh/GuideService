@@ -16,36 +16,9 @@ header {
     }
 }
 
-.icon-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--icon-button);
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-    transition: 0.25s;
-    &.on-hover {
-        background-color: transparent;
-        &:hover {
-            background-color: var(--icon-button);
-        }
-    }
-}
-
-.dashboard-wrapper {
-    display: flex;
-
-    main {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-    }
-}
-
 .calendar-section {
     display: flex;
     flex-direction: column;
-    padding: 1.75rem 1rem;
 }
 
 .order-drawer {
@@ -69,7 +42,11 @@ header {
             justify-content: center;
         }
     }
-
+    .ant-drawer-close {
+        position: absolute;
+        right: 1rem;
+        scale: 1.5;
+    }
     .order-details {
         display: flex;
         gap: 1rem;
@@ -136,6 +113,23 @@ header {
                 display: flex;
                 align-items: center;
                 padding: 12px 15px;
+            }
+        }
+
+        .calendar-view-options {
+            display: flex;
+            align-items: center;
+
+            > div {
+                transition: 0.25s;
+                cursor: pointer;
+                padding: 0.75rem 1rem;
+                border-radius: 0.5rem;
+            }
+
+            .active {
+                color: white;
+                background: #2f4160;
             }
         }
     }

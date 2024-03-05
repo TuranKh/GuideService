@@ -30,3 +30,17 @@ label {
 .ant-switch {
     background: rgba(0, 0, 0, 0.45);
 }
+
+.dashboard-wrapper {
+    display: flex;
+
+    main {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+}
+
+.outlet-wrapper {
+    padding: 1.75rem 1rem;
+}
