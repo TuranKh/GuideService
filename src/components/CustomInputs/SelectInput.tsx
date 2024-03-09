@@ -27,7 +27,9 @@ export const CustomSelectField = function ({ inputDetails, ...rest }: CustomSele
                 {...rest}
             >
                 {inputDetails?.options?.map((option) => (
-                    <Option value={option.value}>{option.label}</Option>
+                    <Option key={option.id} value={option.value}>
+                        {option.name}
+                    </Option>
                 ))}
             </Select>
         </div>

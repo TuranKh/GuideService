@@ -1,8 +1,12 @@
 import { CustomTextField } from "@/components/CustomInputs/TextField";
 import { FormBuilder, FormDetails, InputChangeDetails } from "@/components/FormBuilder";
-import { IconButton } from "@/components/IconButton";
+import { MuseumTable } from "@/components/MuseumTable";
+import { Sidebar } from "@/components/Sidebar";
 import { weekdayNames } from "@/main";
-import { Button, Divider, Drawer, Input, Space, Switch, Table, TableProps, Tag } from "antd";
+import { EnumService, EnumType } from "@/service/Enum";
+import { EnumResponse } from "@/types";
+import { Button, Divider, Drawer, DrawerProps, Input, Space, Switch, Table, TableProps, Tag } from "antd";
+import TextArea from "antd/es/input/TextArea";
 import dayjs from "dayjs";
 import {
     Bell,
@@ -19,14 +23,20 @@ import {
     Search,
     SlidersHorizontal,
 } from "lucide-react";
-import { useState } from "react";
+import React, { ButtonHTMLAttributes, DetailedHTMLProps, useEffect, useState } from "react";
 import "./Dashboard.scss";
 
 export default function Dashboard() {
     return (
-        <div className='calendar-section'>
-            <Actions />
-            <Calendar />
+        <div className='dashboard-wrapper'>
+            <Sidebar />
+            <main>
+                <Header />
+                <div className='calendar-section'>
+                    <Actions />
+                    <Calendar />
+                </div>
+            </main>
         </div>
     );
 }
@@ -139,39 +149,20 @@ export type Nullable<T> = Record<keyof T, T[keyof T] | null>;
 const generalFormFields: FormDetails[] = [
     { label: "Tarix", type: "date", key: "date" },
     { label: "Müştəri sayı", type: "number", key: "customerCount" },
-    { label: "Dil seçimi", type: "select", key: "languageSelection" },
-    { label: "Guide kateqoriya", type: "select", key: "guideCategory" },
+    { label: "Dil seçimi", type: "select", key: "languages" },
+    { label: "Guide kateqoriya", type: "select", key: "guideCategories" },
     { label: "Maşın növü", type: "select", key: "vehicleType" },
     { label: "Qarşılama yeri", type: "text", key: "meetingLocation" },
     { label: "Group lead name", type: "text", key: "groupLeadName" },
     { label: "Turistin əlaqə nömrəsi", type: "text", key: "touristContactNumber" },
-    { label: "Guide", type: "select", key: "guide" },
+    { label: "Guide", type: "select", key: "guideTypes" },
     { label: "Sürücü", type: "select", key: "driver" },
     { label: "Qeydiyyat nişanı", type: "text", key: "registrationPlate" },
     { label: "Təsdiq növü", type: "select", key: "confirmationType" },
 ] as const;
 
-enum CalendarViewOptions {
-    Week = "Week",
-    Month = "Month",
-}
-
-const viewOptions = [
-    {
-        label: "Week",
-        key: CalendarViewOptions.Week,
-    },
-    {
-        label: "Month",
-        key: CalendarViewOptions.Month,
-    },
-];
-
 export const Actions = function () {
     const [orderDrawer, setOrderDrawer] = useState(false);
-    const [generalDetails, setGeneralDetails] = useState<Nullable<GeneralOrderDetails>>(initialGeneralOrderDetails);
-    const [orderDetails, setOrderDetails] = useState({ assignedTo: "", orderNumber: "" });
-    const [activeCalendarViewOption, setActiveCalendarViewOption] = useState<CalendarViewOptions>(CalendarViewOptions.Month);
 
     const openNewOrderDialog = function () {
         setOrderDrawer(true);
@@ -181,9 +172,99 @@ export const Actions = function () {
         setOrderDrawer(false);
     };
 
+    return (
+        <div className='actions-wrapper'>
+            <div className='left'>
+                <div className='arrows-wrapper'>
+                    <IconButton>
+                        <ChevronLeft />
+                    </IconButton>
+                    <div className='date-wrapper'>
+                        <p>Today</p>
+                    </div>
+                    <IconButton>
+                        <ChevronRight />
+                    </IconButton>
+                </div>
+                <IconButton>
+                    <Eye />
+                </IconButton>
+                <IconButton>
+                    <SlidersHorizontal />
+                </IconButton>
+                <IconButton>
+                    <ListFilter />
+                </IconButton>
+            </div>
+
+            <div className='right'>
+                <Button onClick={openNewOrderDialog}>Sifariş yarat</Button>
+                <AppealDrawer onClose={closeDialog} open={orderDrawer} />
+            </div>
+        </div>
+    );
+};
+
+export type AppealDrawerProps = DrawerProps;
+type Options = "languages" | "guideCategories" | "guideTypes";
+
+export const AppealDrawer = function (props: AppealDrawerProps) {
+    const [generalDetails, setGeneralDetails] = useState<Nullable<GeneralOrderDetails>>(initialGeneralOrderDetails);
+    const [orderDetails, setOrderDetails] = useState({ assignedTo: "", orderNumber: "" });
+    const [options, setOptions] = useState<Record<Options, EnumResponse[]> | null>(null);
+
+    const [switchValues, setSwitchValues] = useState<Record<SwitchKey, boolean>>({
+        additionalOrder: true,
+        museum: true,
+        note: true,
+        restaurant: true,
+    });
+
+    useEffect(() => {
+        getInputOptions();
+    }, []);
+
+    const getInputOptions = async function () {
+        const neededOptions: Array<EnumType> = ["LANGUAGE", "GUIDE_CATEGORY", "GUIDE_TYPE"];
+
+        const requests = neededOptions.map((option) => {
+            return EnumService.getEnumList(option);
+        });
+
+        Promise.allSettled(requests).then((responseArray) => {
+            const [languages, guideCategories, guideTypes] = responseArray;
+
+            const finalOptions: Record<Options, EnumResponse[]> = {
+                languages: [],
+                guideCategories: [],
+                guideTypes: [],
+            };
+            if (languages.status === "fulfilled") {
+                finalOptions.languages = languages.value.data;
+            }
+            if (guideCategories.status === "fulfilled") {
+                finalOptions.guideCategories = guideCategories.value.data;
+            }
+            if (guideTypes.status === "fulfilled") {
+                finalOptions.guideTypes = guideTypes.value.data;
+            }
+
+            setOptions(finalOptions);
+        });
+    };
+
     const resetForm = function () {
         setGeneralDetails({
             ...initialGeneralOrderDetails,
+        });
+    };
+
+    const changeSwitchValue = function (isChecked: boolean, key: SwitchKey) {
+        setSwitchValues((currentValue) => {
+            return {
+                ...currentValue,
+                [key]: isChecked,
+            };
         });
     };
 
@@ -205,140 +286,95 @@ export const Actions = function () {
         });
     };
 
-    const changeCalendarViewOption = function (viewOption: CalendarViewOptions) {
-        setActiveCalendarViewOption(viewOption);
-    };
-
     return (
-        <div className='actions-wrapper'>
-            <div className='left'>
-                <div className='arrows-wrapper'>
-                    <IconButton>
-                        <ChevronLeft />
-                    </IconButton>
-                    <div className='date-wrapper'>
-                        <p>Today</p>
-                    </div>
-                    <IconButton>
-                        <ChevronRight />
-                    </IconButton>
-                </div>
-                <div className='calendar-view-options'>
-                    {viewOptions.map((option) => {
-                        return (
-                            <div
-                                className={activeCalendarViewOption === option.key ? "active" : ""}
-                                onClick={() => changeCalendarViewOption(option.key)}
-                            >
-                                {option.label}
-                            </div>
-                        );
-                    })}
-                </div>
-                <IconButton>
-                    <Eye />
-                </IconButton>
-                <IconButton>
-                    <SlidersHorizontal />
-                </IconButton>
-                <IconButton>
-                    <ListFilter />
-                </IconButton>
+        <Drawer className='order-drawer' width='90%' title={<DrawerHeader orderNumber='AT781Y2348' />} {...props}>
+            <div className='order-details'>
+                <CustomTextField
+                    inputDetails={{
+                        key: "orderNumber",
+                        onChange: onOrderDetailsChange,
+                        label: "Sifariş nömrəsi",
+                        type: "text",
+                        value: orderDetails.orderNumber,
+                    }}
+                />
+                <CustomTextField
+                    inputDetails={{
+                        key: "assignedTo",
+                        onChange: onOrderDetailsChange,
+                        label: "Təyin edilib",
+                        type: "text",
+                        value: orderDetails.assignedTo,
+                    }}
+                />
             </div>
+            <form className='general-inputs-wrapper'>
+                <p>Ümumi məlumatlar</p>
+                <div className='general-inputs'>
+                    <FormBuilder
+                        form={{
+                            inputs: generalFormFields,
+                            // @ts-ignore
+                            onChange: onGeneralFormChange,
+                            values: generalDetails,
+                            // @ts-ignore
+                            options: options,
+                        }}
+                    />
+                    <IconButton className='reset' type='reset' onClick={resetForm}>
+                        <RefreshCcw />
+                    </IconButton>
+                </div>
 
-            <div className='right'>
-                <Button onClick={openNewOrderDialog}>Sifariş yarat</Button>
+                <Divider />
+            </form>
 
-                <Drawer
-                    className='order-drawer'
-                    width='90%'
-                    title={<DrawerHeader orderNumber='AT781Y2348' />}
-                    onClose={closeDialog}
-                    open={orderDrawer}
-                >
-                    <div className='order-details'>
-                        <CustomTextField
-                            inputDetails={{
-                                key: "orderNumber",
-                                onChange: onOrderDetailsChange,
-                                label: "Sifariş nömrəsi",
-                                type: "text",
-                                value: orderDetails.orderNumber,
-                            }}
-                        />
-                        <CustomTextField
-                            inputDetails={{
-                                key: "assignedTo",
-                                onChange: onOrderDetailsChange,
-                                label: "Təyin edilib",
-                                type: "text",
-                                value: orderDetails.assignedTo,
-                            }}
-                        />
-                    </div>
-                    <form className='general-inputs-wrapper'>
-                        <p>Ümumi məlumatlar</p>
-                        <div className='general-inputs'>
-                            {/* {generalFormFields.map((fieldDetails) => {
-                                const { key, label } = fieldDetails;
-                                const value = generalDetails[key] as string;
-                                return (
-                                    <CustomInput
-                                        key={key}
-                                        name={key}
-                                        onChange={onGeneralFormChange}
-                                        key={key as string}
-                                        label={label}
-                                        type='text'
-                                        value={value}
-                                    />
-                                );
-                            })} */}
-                            <FormBuilder
-                                form={{
-                                    inputs: generalFormFields,
-                                    onChange: onGeneralFormChange,
-                                    values: generalDetails,
-                                    options: { languageSelection: [] },
-                                }}
+            <Table columns={columns} dataSource={data} />
+
+            <div className='switches-wrapper'>
+                {Switches.map((switchDetails) => {
+                    return (
+                        <div key={switchDetails.key}>
+                            <p>{switchDetails.name}</p>
+                            <Switch
+                                value={switchValues[switchDetails.key]}
+                                onClick={(checked) => changeSwitchValue(checked, switchDetails.key)}
+                                key={switchDetails.key}
                             />
-                            <IconButton className='reset' type='reset' onClick={resetForm}>
-                                <RefreshCcw />
-                            </IconButton>
                         </div>
-
-                        <Divider />
-                    </form>
-
-                    <Table columns={columns} dataSource={data} />
-
-                    <div className='switches-wrapper'>
-                        {Switches.map((switchDetails) => {
-                            return (
-                                <div>
-                                    <p>{switchDetails.name}</p>
-                                    <Switch key={switchDetails.key} />
-                                </div>
-                            );
-                        })}
-                    </div>
-                </Drawer>
+                    );
+                })}
             </div>
-        </div>
+
+            {switchValues.museum && <MuseumTable />}
+            {switchValues.restaurant && <Table columns={restaurantColumns} dataSource={[]} />}
+            {switchValues.additionalOrder && <Table columns={additionalOrderColumns} dataSource={[]} />}
+
+            {switchValues.note && (
+                <div className='additional-note'>
+                    <label htmlFor='additional-note'>Qeyd</label>
+                    <TextArea id='additional-note' rows={4} variant='filled' />
+                </div>
+            )}
+
+            <Button className='self-end'>Yarat</Button>
+        </Drawer>
     );
 };
 
-export const DrawerHeader = function ({ orderNumber, title }: { orderNumber: string; title?: string }) {
+export const DrawerHeader = function ({ orderNumber }: { orderNumber: string }) {
     const color = "#DBDBDB";
     return (
         <div className='drawer-header'>
-            <p>{title}</p>
+            <p>Yeni Sifariş</p>
             <Tag color={color}>{orderNumber.toUpperCase()}</Tag>
         </div>
     );
 };
 
-export const Switches = [
+export type SwitchKey = "museum" | "restaurant" | "additionalOrder" | "note";
+
+export const Switches: Array<{ name: string; key: SwitchKey }> = [
     {
         name: "Muzey",
         key: "museum",
@@ -370,7 +406,7 @@ const columns: TableProps<DataType>["columns"] = [
         title: "Tarix",
         dataIndex: "name",
         key: "name",
-        render: (text) => <a>{text}</a>,
+        render: (text: string) => <a>{text}</a>,
     },
     {
         title: "Servis",
@@ -434,6 +470,84 @@ const columns: TableProps<DataType>["columns"] = [
     },
 ];
 
+const restaurantColumns = [
+    {
+        title: "Tarix",
+        dataIndex: "date",
+        key: "date",
+        render: (text: string) => <a>{text}</a>,
+    },
+    {
+        title: "Yemək növü",
+        dataIndex: "foodType",
+        key: "foodType",
+    },
+    {
+        title: "Restoran adı",
+        dataIndex: "restaurantName",
+        key: "restaurantName",
+    },
+    {
+        title: "Menyu",
+        dataIndex: "menu",
+        key: "menu",
+    },
+    {
+        title: "Say",
+        dataIndex: "count",
+        key: "count",
+    },
+    {
+        title: "Ödəniş növü",
+        dataIndex: "paymentType",
+        key: "paymentType",
+    },
+    {
+        title: "Menyu qiyməti",
+        dataIndex: "menuPrice",
+        key: "menuPrice",
+    },
+    {
+        title: "Ümumi qiymət",
+        dataIndex: "totalPrice",
+        key: "totalPrice",
+    },
+];
+
+const additionalOrderColumns = [
+    {
+        title: "Tarix",
+        dataIndex: "date",
+        key: "date",
+        render: (text: string) => <a>{text}</a>,
+    },
+    {
+        title: "Təyinat",
+        dataIndex: "toyType",
+        key: "toyType",
+    },
+    {
+        title: "Ödəniş növü",
+        dataIndex: "paymentType",
+        key: "paymentType",
+    },
+    {
+        title: "Say",
+        dataIndex: "count",
+        key: "count",
+    },
+    {
+        title: "Qiyməti",
+        dataIndex: "price",
+        key: "price",
+    },
+    {
+        title: "Ümumi qiymət",
+        dataIndex: "totalPrice",
+        key: "totalPrice",
+    },
+];
+
 const data: DataType[] = [
     {
         key: "1",
@@ -457,6 +571,20 @@ const data: DataType[] = [
         tags: ["cool", "teacher"],
     },
 ];
+
+export const IconButton = function ({
+    children,
+    ...buttonDefaultProps
+}: {
+    children: React.ReactElement;
+} & DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>) {
+    const className = `icon-button ${buttonDefaultProps.className}`;
+    return (
+        <button {...buttonDefaultProps} className={className}>
+            {children}
+        </button>
+    );
+};
 
 export const Header = function () {
     return (

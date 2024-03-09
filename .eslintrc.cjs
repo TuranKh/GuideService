@@ -19,5 +19,6 @@ module.exports = {
         ],
         "@typescript-eslint/no-explicit-any": "off",
         "no-console": "error",
+        "@typescript-eslint/ban-ts-comment": "off",
     },
 };

@@ -1,6 +1,7 @@
 import { CustomDatePicker } from "@/components/CustomInputs/DatePicker";
 import { CustomSelectField } from "@/components/CustomInputs/SelectInput";
 import { CustomTextField } from "@/components/CustomInputs/TextField";
+import { EnumResponse } from "@/types";
 import { InputProps } from "antd";
 import dayjs, { Dayjs, isDayjs } from "dayjs";
 
@@ -28,7 +29,8 @@ export const FormBuilder = function ({ form }: { form: DynamicFormDetails & { in
                                 ...inputDetails,
                                 onChange: form.onChange,
                                 value: form.values[inputDetails.key],
-                                options: form?.options[inputDetails.key],
+                                // @ts-ignore
+                                options: form?.options?.[inputDetails.key],
                             }}
                         />
                     );
@@ -51,7 +53,7 @@ export const FormBuilder = function ({ form }: { form: DynamicFormDetails & { in
 
 export type ExtendedInputDetails<T = any> = { value: T; onChange: (details: { key: string; value: T | null }) => void } & FormDetails;
 
-export type CustomSelectProps = Omit<ExtendedInputDetails, "type"> & { options: Array<{ value: InputValue; label: string }> };
+export type CustomSelectProps = Omit<ExtendedInputDetails, "type"> & { options: Array<EnumResponse> };
 
 export type FormDetails = {
     label?: string;
