@@ -6,6 +6,7 @@ import { CustomNoOptions } from "./components/CustomNoOptions/index.tsx";
 import { Loading } from "./components/Loading/index.tsx";
 import "./index.css";
 import { router } from "./router/router.tsx";
+
 import "dayjs/locale/az";
 import { Toaster } from "react-hot-toast";
 import "./App.css";

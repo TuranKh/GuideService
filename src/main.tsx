@@ -4,9 +4,8 @@ import updateLocale from "dayjs/plugin/updateLocale";
 import weekday from "dayjs/plugin/weekday";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { RouterProvider } from "react-router-dom";
 import "./index.css";
-import { router } from "./router/router";
+import App from "./App";
 
 dayjs.extend(updateLocale);
 dayjs.extend(weekday);
@@ -20,6 +19,6 @@ dayjs.updateLocale("az", {
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
-        <RouterProvider router={router} />
+        <App />
     </React.StrictMode>,
 );
