@@ -20,7 +20,16 @@ function App() {
         <>
             <QueryClientProvider client={queryClient}>
                 <Suspense fallback={<Loading />}>
-                    <DesignConfigProvider componentSize='large' renderEmpty={CustomNoOptions} locale={AzLocale}>
+                    <DesignConfigProvider
+                        theme={{
+                            token: {
+                                colorPrimary: "#2F4160",
+                            },
+                        }}
+                        componentSize='large'
+                        renderEmpty={CustomNoOptions}
+                        locale={AzLocale}
+                    >
                         <RouterProvider router={router} />
                     </DesignConfigProvider>
                 </Suspense>

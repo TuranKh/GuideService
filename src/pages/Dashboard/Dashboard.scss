@@ -16,9 +16,31 @@ header {
     }
 }
 
-.calendar-section {
+.icon-button {
+    cursor: pointer;
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--icon-button);
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    transition: 0.25s;
+    &.on-hover {
+        background-color: transparent;
+        &:hover {
+            background-color: var(--icon-button);
+        }
+    }
+}
+
+.dashboard-wrapper {
+    display: flex;
+
+    main {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
 }
 
 .order-drawer {
@@ -130,56 +152,6 @@ header {
             .active {
                 color: white;
                 background: #2f4160;
-            }
-        }
-    }
-}
-
-.calendar {
-    margin-top: 2rem;
-    display: flex;
-    gap: 0.5rem;
-    .calendar-row {
-        display: flex;
-        border-right: 2px solid rgb(221, 221, 221);
-        padding-right: 0.5rem;
-        flex-direction: column;
-        gap: 0.25rem;
-        flex-grow: 1;
-        .row-details {
-            border-radius: 0.25rem;
-            background-color: var(--icon-button);
-            padding: 0.5rem 1rem;
-            transition: 0.25s;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            .date-details {
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-            }
-            &:hover {
-                background-color: transparent;
-                box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-            }
-        }
-        .row-main-content {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-
-            .calendar-event {
-                width: 100%;
-                height: 5rem;
-                background-color: var(--icon-button);
-                border-radius: 0.5rem;
-                border-left: 6px solid #4fc585;
-                display: flex;
-                flex-direction: column;
-                padding: 6px;
-                cursor: pointer;
             }
         }
     }
