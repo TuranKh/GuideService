@@ -11,15 +11,20 @@ import "dayjs/locale/az";
 import { Toaster } from "react-hot-toast";
 import "./App.css";
 import "./index.css";
+import { QueryClient, QueryClientProvider } from "react-query";
+
+const queryClient = new QueryClient();
 
 function App() {
     return (
         <>
-            <Suspense fallback={<Loading />}>
-                <DesignConfigProvider componentSize='large' renderEmpty={CustomNoOptions} locale={AzLocale}>
-                    <RouterProvider router={router} />
-                </DesignConfigProvider>
-            </Suspense>
+            <QueryClientProvider client={queryClient}>
+                <Suspense fallback={<Loading />}>
+                    <DesignConfigProvider componentSize='large' renderEmpty={CustomNoOptions} locale={AzLocale}>
+                        <RouterProvider router={router} />
+                    </DesignConfigProvider>
+                </Suspense>
+            </QueryClientProvider>
             <Toaster position='bottom-right' />
         </>
     );
