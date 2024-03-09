@@ -30,3 +30,7 @@ label {
 .ant-switch {
     background: rgba(0, 0, 0, 0.45);
 }
+
+.main-section {
+    padding: 1.5rem;
+}

@@ -29,37 +29,37 @@ export const Sidebar = function () {
 const Menus = [
     {
         icon: <Calendar />,
-        route: "/dashboard",
+        route: "calendar",
         title: "Here it is",
     },
     {
         icon: <LayoutDashboard />,
-        route: "/layout",
+        route: "dashboard",
         title: "Here it is",
     },
     {
         icon: <Users />,
-        route: "/users",
+        route: "users",
         title: "Here it is",
     },
     {
         icon: <MessageCircle />,
-        route: "/messages",
+        route: "messages",
         title: "Here it is",
     },
     {
         icon: <Map />,
-        route: "/map",
+        route: "map",
         title: "Here it is",
     },
     {
         icon: <ListChecks />,
-        route: "/history",
+        route: "history",
         title: "Here it is",
     },
     {
         icon: <History />,
-        route: "/history",
+        route: "history",
         title: "Here it is",
     },
 ];

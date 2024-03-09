@@ -1,5 +1,6 @@
 import { PageNotFound } from "@/components/PageNotFound";
-import Dashboard from "@/pages/Dashboard";
+import { Calendar } from "@/pages/Calendar";
+import Main from "@/pages/Dashboard";
 import Login from "@/pages/Login";
 import { createBrowserRouter } from "react-router-dom";
 
@@ -9,15 +10,21 @@ export const router = createBrowserRouter([
         element: <Login />,
     },
     {
-        path: "/dashboard",
-        element: <Dashboard />,
-    },
-    {
-        path: "/calendar",
-        element: <Dashboard />,
-    },
-    {
-        path: "*",
-        element: <PageNotFound />,
+        path: "/",
+        element: <Main />,
+        children: [
+            {
+                path: "dashboard",
+                element: <Calendar />,
+            },
+            {
+                path: "calendar",
+                element: <Calendar />,
+            },
+            {
+                path: "*",
+                element: <PageNotFound />,
+            },
+        ],
     },
 ]);

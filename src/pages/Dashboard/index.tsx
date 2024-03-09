@@ -2,113 +2,26 @@ import { CustomTextField } from "@/components/CustomInputs/TextField";
 import { FormBuilder, FormDetails, InputChangeDetails } from "@/components/FormBuilder";
 import { MuseumTable } from "@/components/MuseumTable";
 import { Sidebar } from "@/components/Sidebar";
-import { weekdayNames } from "@/main";
 import { EnumService, EnumType } from "@/service/Enum";
 import { EnumResponse } from "@/types";
 import { Button, Divider, Drawer, DrawerProps, Input, Space, Switch, Table, TableProps, Tag } from "antd";
 import TextArea from "antd/es/input/TextArea";
-import dayjs from "dayjs";
-import {
-    Bell,
-    Bookmark,
-    Bus,
-    ChevronLeft,
-    ChevronRight,
-    Eye,
-    Headphones,
-    ListFilter,
-    Plane,
-    Plus,
-    RefreshCcw,
-    Search,
-    SlidersHorizontal,
-} from "lucide-react";
+import { Bell, Bookmark, RefreshCcw, Search } from "lucide-react";
 import React, { ButtonHTMLAttributes, DetailedHTMLProps, useEffect, useState } from "react";
+import { Outlet } from "react-router";
 import "./Dashboard.scss";
 
-export default function Dashboard() {
+export default function Main() {
     return (
         <div className='dashboard-wrapper'>
             <Sidebar />
             <main>
                 <Header />
-                <div className='calendar-section'>
-                    <Actions />
-                    <Calendar />
-                </div>
+                <Outlet />
             </main>
         </div>
     );
 }
-function getCurrentWeekDates() {
-    const weekStart = dayjs().startOf("week");
-
-    const dates = Array.from({ length: 7 }, (_, index) => {
-        const date = weekStart.add(index, "day");
-        return date.format("DD MMMM");
-    });
-
-    return dates;
-}
-export const Calendar = function () {
-    const currentWeekDates = getCurrentWeekDates();
-
-    return (
-        <div className='calendar'>
-            {weekdayNames.map((weekDay, index) => {
-                return (
-                    <div className='calendar-row'>
-                        <div className='row-details'>
-                            <div className='date-details'>
-                                <p className='font-light text-xs'>{weekDay}</p>
-                                <p>{currentWeekDates[index]}</p>
-                            </div>
-                            <Plus />
-                        </div>
-                        <div className='row-main-content'>
-                            {temporaryRowDetails.map((details) => {
-                                return <CalendarEvent details={details} />;
-                            })}
-                        </div>
-                    </div>
-                );
-            })}
-        </div>
-    );
-};
-
-export const CalendarEvent = function ({ details }: { details: { name: string } }) {
-    return (
-        <div className='calendar-event'>
-            <div className='flex justify-between'>
-                <p className='text-xs font-light agency-name'>{details.name}</p>
-                <div className='flex gap-0.5'>
-                    <Bus size={16} />
-                    <Plane size={16} />
-                    <Headphones size={16} />
-                </div>
-            </div>
-        </div>
-    );
-};
-
-const temporaryRowDetails = [
-    {
-        name: "Agro Agency",
-    },
-    {
-        name: "Agro Agency",
-    },
-    {
-        name: "Agro Agency",
-    },
-    {
-        name: "Agro Agency",
-    },
-    {
-        name: "Agro Agency",
-    },
-];
 
 type GeneralOrderDetails = {
     orderNumber: number;
@@ -161,50 +74,6 @@ const generalFormFields: FormDetails[] = [
     { label: "Təsdiq növü", type: "select", key: "confirmationType" },
 ] as const;
 
-export const Actions = function () {
-    const [orderDrawer, setOrderDrawer] = useState(false);
-
-    const openNewOrderDialog = function () {
-        setOrderDrawer(true);
-    };
-
-    const closeDialog = function () {
-        setOrderDrawer(false);
-    };
-
-    return (
-        <div className='actions-wrapper'>
-            <div className='left'>
-                <div className='arrows-wrapper'>
-                    <IconButton>
-                        <ChevronLeft />
-                    </IconButton>
-                    <div className='date-wrapper'>
-                        <p>Today</p>
-                    </div>
-                    <IconButton>
-                        <ChevronRight />
-                    </IconButton>
-                </div>
-                <IconButton>
-                    <Eye />
-                </IconButton>
-                <IconButton>
-                    <SlidersHorizontal />
-                </IconButton>
-                <IconButton>
-                    <ListFilter />
-                </IconButton>
-            </div>
-
-            <div className='right'>
-                <Button onClick={openNewOrderDialog}>Sifariş yarat</Button>
-                <AppealDrawer onClose={closeDialog} open={orderDrawer} />
-            </div>
-        </div>
-    );
-};
-
 export type AppealDrawerProps = DrawerProps;
 type Options = "languages" | "guideCategories" | "guideTypes";
 
@@ -214,10 +83,10 @@ export const AppealDrawer = function (props: AppealDrawerProps) {
     const [options, setOptions] = useState<Record<Options, EnumResponse[]> | null>(null);
 
     const [switchValues, setSwitchValues] = useState<Record<SwitchKey, boolean>>({
-        additionalOrder: true,
-        museum: true,
-        note: true,
-        restaurant: true,
+        additionalOrder: false,
+        museum: false,
+        note: false,
+        restaurant: false,
     });
 
     useEffect(() => {
