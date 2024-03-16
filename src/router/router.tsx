@@ -1,4 +1,5 @@
 import { PageNotFound } from "@/components/PageNotFound";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { Calendar } from "@/pages/Calendar";
 import Main from "@/pages/Dashboard";
 import Login from "@/pages/Login";
@@ -11,19 +12,25 @@ export const router = createBrowserRouter([
     },
     {
         path: "/",
-        element: <Main />,
+        element: <ProtectedRoute />,
         children: [
             {
-                path: "dashboard",
-                element: <Calendar />,
-            },
-            {
-                path: "calendar",
-                element: <Calendar />,
-            },
-            {
-                path: "*",
-                element: <PageNotFound />,
+                path: "",
+                element: <Main />,
+                children: [
+                    {
+                        path: "dashboard",
+                        element: <Calendar />,
+                    },
+                    {
+                        path: "calendar",
+                        element: <Calendar />,
+                    },
+                    {
+                        path: "*",
+                        element: <PageNotFound />,
+                    },
+                ],
             },
         ],
     },

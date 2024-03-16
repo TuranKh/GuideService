@@ -1,11 +1,13 @@
 import LoginBackground from "@/assets/login-background.jpg";
 import Logo from "@/assets/logo.png";
-import { ElementRef, FormEvent, useRef, useState } from "react";
-import "./Login.scss";
-import { useNavigate } from "react-router";
-import Input from "antd/es/input/Input";
+import { tokenSetter } from "@/lib/tokenHandler";
+import { EmailValidator } from "@/lib/validator";
+import AuthService from "@/service/AuthService";
 import { Button, Switch } from "antd";
-import toast from "react-hot-toast";
+import Input from "antd/es/input/Input";
+import { ElementRef, FormEvent, useRef, useState } from "react";
+import { useNavigate } from "react-router";
+import "./Login.scss";
 
 export default function Login() {
     const navigate = useNavigate();
@@ -43,11 +45,27 @@ export default function Login() {
 
     const signIn = function (e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        const isValid = true;
+        const isValid = EmailValidator.validate(signInDetails.email, true);
 
         if (isValid) {
-            toast.success("Uğurla giriş etdiniz!");
+            validateUserCredentials();
+            // toast.success("Uğurla giriş etdiniz!");
+            // navigate("/dashboard");
+        }
+    };
+
+    const validateUserCredentials = async function () {
+        try {
+            const signInRequest = await AuthService.loginUser({ password: signInDetails.password, username: signInDetails.email });
+            const { token, refreshToken } = signInRequest.data;
+
+            tokenSetter({
+                accessToken: token,
+                refreshToken: refreshToken,
+            });
             navigate("/dashboard");
+        } catch {
+            return;
         }
     };
 
